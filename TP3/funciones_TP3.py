@@ -334,7 +334,7 @@ def cargar_desde_csv(estudiantes: list, ruta: str) -> None:
         with open(ruta, "r", encoding="utf-8-sig") as archivo:
             for linea in archivo:
                 if linea.strip() == "":
-                    continue                      # se ignoran líneas en blanco
+                    continue                      
                 estudiante = linea_a_estudiante(linea)
                 if estudiante is None:
                     print(f"  Línea ignorada (datos inválidos): {linea.strip()}")

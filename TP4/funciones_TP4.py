@@ -81,9 +81,6 @@ def validacion_nombre(texto: str) -> bool:
     Verifica que el nombre contenga solo letras (con tildes y ñ) y espacios,
     y que tenga al menos una letra.
 
-    Usa una bandera (hay_letra) para detectar el caso "solo espacios", que
-    sería un nombre vacío en la práctica.
-
     Args:
         texto (str): nombre y apellido ingresado.
 
@@ -270,10 +267,6 @@ def crear_estudiante(legajo: int, nombre: str, genero: str, notas: list) -> dict
     """
     Arma el diccionario de un estudiante.
 
-    Centraliza la creación para que TODOS los estudiantes (cargados a mano o
-    desde CSV) tengan exactamente la misma estructura y las mismas claves.
-    El promedio arranca en 0.0: se calcula recién en la opción 4 del menú.
-
     Args:
         legajo (int): legajo de 5 cifras (ya validado).
         nombre (str): nombre y apellido (ya validado).
@@ -297,11 +290,6 @@ def linea_a_estudiante(linea: str):
     """
     Convierte UNA línea de texto del CSV en un diccionario de estudiante.
 
-    Pasos:
-        1. Se sacan los saltos de línea con strip() y se separa con split(",").
-        2. Se controla la cantidad de campos.
-        3. Se valida CADA dato con su función de validación.
-        4. Se convierten a int el legajo y las notas (en el archivo todo es texto).
 
     Args:
         linea (str): una línea del archivo CSV.
@@ -338,19 +326,8 @@ def cargar_desde_csv(estudiantes: list, ruta: str) -> None:
     """
     Carga los estudiantes desde un archivo CSV y REEMPLAZA el contenido de la lista.
 
-    Funcionamiento:
-        - Abre el archivo en modo lectura ("r") con 'with', que lo cierra solo.
-        - Lee línea por línea y convierte cada una con linea_a_estudiante().
-        - Las líneas inválidas, con legajo repetido, o que superen el máximo de
-          estudiantes se informan por pantalla y se saltean (no frenan la carga).
-        - Los estudiantes válidos se juntan primero en una lista auxiliar; recién
-          al final se reemplaza la lista original. Así, si el archivo no existe
-          o no tiene datos válidos, NO se pierden los datos que ya había.
-        - Se usa clear()/extend() para modificar la MISMA lista que usa el menú
-          (si se asignara una nueva, el menú seguiría viendo la vieja).
-
-    Se usa encoding "utf-8-sig" para leer bien tildes y ñ, y tolerar el
-    carácter invisible (BOM) que algunos editores agregan al inicio.
+    Se usa encoding "utf-8-sig" para leer bien tildes y ñ. 
+    Se ignoran líneas en blanco y se informa por pantalla si alguna línea
 
     Args:
         estudiantes (list): lista de diccionarios que se va a modificar.
@@ -469,7 +446,7 @@ def crear_normalizador(funcion):
     """
     Función que DEVUELVE otra función (closure).
 
-    La función devuelta normaliza todos los datos str de UN estudiante,
+    La función devuelta normaliza todos los datos str de un estudiante,
     aplicando 'funcion' a cada carácter. Los datos que no son str
     (legajo, notas, promedio) quedan igual. No modifica el original.
 
@@ -584,11 +561,6 @@ def ordenar_por_promedio(estudiantes: list, orden: str) -> None:
     """
     Ordena la lista de diccionarios por la clave "promedio".
 
-    Método de intercambio directo: se fija la posición i y se la compara con
-    todas las siguientes (j). Si el par está en el orden equivocado, se
-    intercambian. Al terminar cada vuelta de i, en esa posición queda el
-    elemento que corresponde.
-
     Args:
         estudiantes (list): lista de diccionarios; se ordena en el lugar.
         orden (str): 'ASC' (menor a mayor) o 'DESC' (mayor a menor).
@@ -684,9 +656,6 @@ def promedios_calculados(estudiantes: list) -> bool:
     """
     Indica si TODOS los estudiantes tienen su promedio calculado.
 
-    Un promedio real nunca es 0 (la nota mínima es 1), por eso un promedio
-    igual a 0 significa "todavía sin calcular".
-
     Args:
         estudiantes (list): lista de diccionarios de estudiantes.
 
@@ -768,11 +737,6 @@ def mostrar_materias_mayor_promedio(estudiantes: list) -> None:
     """
     Recorre las materias y muestra la/s de mayor promedio general.
 
-    Se comparan las SUMAS (enteros) y no los promedios redondeados: como todas
-    las materias se dividen por la misma cantidad de estudiantes, la mayor suma
-    es el mayor promedio, y un empate es exacto (sin efecto del redondeo).
-    Si hay empate se muestran todas las materias empatadas.
-
     Args:
         estudiantes (list): lista de diccionarios de estudiantes (no vacía).
 
@@ -812,14 +776,6 @@ def guardar_json(estudiantes: list, ruta: str) -> bool:
     """
     Guarda la lista de diccionarios completa en un archivo JSON.
 
-    Como la lista de diccionarios ya tiene estructura clave-valor, json.dump()
-    la convierte directamente, sin recorrerla a mano (a diferencia del CSV).
-
-    Detalles:
-        - Modo "w": crea el archivo o lo sobreescribe si ya existía.
-        - indent=4: solo hace el archivo legible; no cambia los datos.
-        - ensure_ascii=False: guarda "Doña" como "Doña" y no como "Do\\u00f1a".
-        - encoding="utf-8": necesario para guardar bien tildes y ñ.
 
     Args:
         estudiantes (list): lista de diccionarios a guardar.
